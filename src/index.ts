@@ -2,6 +2,7 @@ import { generatePassword, PasswordGeneratorOptions, defaultPasswordOptions } fr
 import { generatePassphrase, PassphraseGeneratorOptions, defaultPassphraseOptions } from './passphrase';
 import { generatePin, PinGeneratorOptions, defaultPinOptions } from './pin';
 import { calculateStrength, calculateEntropy, PasswordStrength } from './strength';
+import { validatePassword, PasswordPolicy, ValidationResult } from './validator';
 
 export {
     generatePassword,
@@ -15,7 +16,10 @@ export {
     defaultPinOptions,
     calculateStrength,
     calculateEntropy,
-    PasswordStrength
+    PasswordStrength,
+    validatePassword,
+    PasswordPolicy,
+    ValidationResult
 };
 
 // Deprecated: Use named exports instead for better tree-shaking
@@ -50,5 +54,12 @@ export class PasswordGenerator {
      */
     static calculateStrength(password: string): PasswordStrength {
         return calculateStrength(password);
+    }
+
+    /**
+     * Validate a password against a policy
+     */
+    static validatePassword(password: string, policy: PasswordPolicy): ValidationResult {
+        return validatePassword(password, policy);
     }
 }
