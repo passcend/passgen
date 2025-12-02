@@ -1,5 +1,6 @@
 import { generatePassword, PasswordGeneratorOptions, defaultPasswordOptions } from './password';
 import { generatePassphrase, PassphraseGeneratorOptions, defaultPassphraseOptions } from './passphrase';
+import { generatePin, PinGeneratorOptions, defaultPinOptions } from './pin';
 import { calculateStrength, calculateEntropy, PasswordStrength } from './strength';
 
 export {
@@ -9,6 +10,9 @@ export {
     generatePassphrase,
     PassphraseGeneratorOptions,
     defaultPassphraseOptions,
+    generatePin,
+    PinGeneratorOptions,
+    defaultPinOptions,
     calculateStrength,
     calculateEntropy,
     PasswordStrength
@@ -18,6 +22,7 @@ export {
 export class PasswordGenerator {
     static defaultPasswordOptions = defaultPasswordOptions;
     static defaultPassphraseOptions = defaultPassphraseOptions;
+    static defaultPinOptions = defaultPinOptions;
 
     /**
      * Generate a random password
@@ -31,6 +36,13 @@ export class PasswordGenerator {
      */
     static generatePassphrase(options: Partial<PassphraseGeneratorOptions> = {}): string {
         return generatePassphrase(options);
+    }
+
+    /**
+     * Generate a PIN
+     */
+    static generatePin(options: Partial<PinGeneratorOptions> = {}): string {
+        return generatePin(options);
     }
 
     /**

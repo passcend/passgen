@@ -2,9 +2,11 @@
 import {
     generatePassword,
     generatePassphrase,
+    generatePin,
     calculateStrength,
     defaultPasswordOptions,
-    defaultPassphraseOptions
+    defaultPassphraseOptions,
+    defaultPinOptions
 } from './index';
 
 const args = process.argv.slice(2);
@@ -19,6 +21,7 @@ Usage:
 Commands:
   password (default)    Generate a random password
   passphrase            Generate a memorable passphrase
+  pin                   Generate a numeric PIN
   strength <password>   Check strength of a password
 
 Global Options:
@@ -42,11 +45,16 @@ Passphrase Options:
   --transform <type>    Case transformation: 'lowercase', 'uppercase', 'titlecase'
   --leet                Apply 1337 substitutions (e.g. 'e' -> '3')
 
+PIN Options:
+  --length, -l <n>      Length of PIN (default: ${defaultPinOptions.length})
+  --allow-seq           Allow sequential patterns (e.g. 1234)
+  --allow-repeat        Allow repeated patterns (e.g. 1111)
+
 Examples:
   passphrase-generator password -l 20 --no-special
   passphrase-generator passphrase -w 5 --sep "_"
   passphrase-generator passphrase --lang ko
-  passphrase-generator passphrase --lang ko --qwerty
+  passphrase-generator pin -l 6
   passphrase-generator strength "correct-horse-battery-staple"
 `);
 }
@@ -60,7 +68,7 @@ function parseArgs(args: string[]) {
     let startIndex = 0;
     if (args.length > 0 && !args[0].startsWith('-')) {
         const cmd = args[0].toLowerCase();
-        if (['password', 'passphrase', 'strength', 'help'].includes(cmd)) {
+        if (['password', 'passphrase', 'pin', 'strength', 'help'].includes(cmd)) {
             command = cmd;
             startIndex = 1;
         }
@@ -75,14 +83,16 @@ function parseArgs(args: string[]) {
             break;
         }
 
-        // Password options
+        // Common options (Length used for Password and PIN)
         if (arg === '--length' || arg === '-l') {
             const next = args[i + 1];
             if (next && /^\d+$/.test(next)) {
                 options.length = parseInt(next, 10);
                 i++;
             }
-        } else if (arg === '--no-upper') {
+        }
+        // Password options
+        else if (arg === '--no-upper') {
             options.uppercase = false;
         } else if (arg === '--no-lower') {
             options.lowercase = false;
@@ -130,6 +140,12 @@ function parseArgs(args: string[]) {
         } else if (arg === '--leet') {
             options.leet = true;
         }
+        // PIN options
+        else if (arg === '--allow-seq') {
+            options.allowSequential = true;
+        } else if (arg === '--allow-repeat') {
+            options.allowRepeated = true;
+        }
         // Input for strength (or loose args)
         else if (!arg.startsWith('-')) {
             input = arg;
@@ -152,6 +168,9 @@ function run() {
                 break;
             case 'passphrase':
                 console.log(generatePassphrase(options));
+                break;
+            case 'pin':
+                console.log(generatePin(options));
                 break;
             case 'strength':
                 if (!input) {
