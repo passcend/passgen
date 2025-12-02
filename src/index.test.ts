@@ -42,6 +42,32 @@ describe('PasswordGenerator', () => {
                 expect(word[0]).toMatch(/[A-Z]/);
             });
         });
+
+        it('should apply transformations', () => {
+            const passphrase = PasswordGenerator.generatePassphrase({
+                numWords: 3,
+                transform: 'uppercase',
+                includeNumber: false
+            });
+            expect(passphrase).toBe(passphrase.toUpperCase());
+        });
+
+        it('should apply leet speak', () => {
+             // Use a seed or check for specific substitutions if possible,
+             // or just check that it differs from original if it contains leet-able chars.
+             // But since it's random, we can't easily predict 'original'.
+             // We can check if it contains numbers/symbols that leet speak uses (like 3, 4, 1, 0)
+             // even if includeNumber is false.
+             const passphrase = PasswordGenerator.generatePassphrase({
+                 numWords: 10, // Increase chance of getting leet chars
+                 leet: true,
+                 includeNumber: false,
+                 wordSeparator: ' '
+             });
+             // Check if it contains leet characters (numbers that map to letters)
+             // 4, 3, 1, 0, 5, 7, 8, 9, 2
+             expect(/[0-9]/.test(passphrase)).toBe(true);
+        });
     });
 
     describe('calculateStrength (Class method)', () => {
