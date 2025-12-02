@@ -9,6 +9,7 @@ Node.js 및 브라우저를 위한 안전하고 유연하며 종속성이 없는
 *   **패스프레이즈 (Passphrases)**:
     *   **영어**: EFF 대용량 단어 목록 (7776개 단어)을 사용합니다.
     *   **한국어**: BIP-39 한국어 단어 목록을 사용하여 기억하기 쉬운 패스프레이즈를 생성합니다.
+*   **PIN 생성기 (PIN Generator)**: 보안성이 강화된 숫자 PIN 생성 (연속된 숫자 및 반복되는 숫자 방지 기능).
 *   **변환 기능 (Transformations)**:
     *   대소문자 변환 (Lowercase, Uppercase, Titlecase)
     *   Leet Speak (1337) 지원
@@ -41,6 +42,7 @@ passphrase-generator [command] [options]
 
 *   `password`: 임의의 비밀번호 생성 (기본값)
 *   `passphrase`: 기억하기 쉬운 패스프레이즈 생성
+*   `pin`: 숫자 PIN 생성
 *   `strength <password>`: 비밀번호 강도 확인
 *   `help`: 도움말 표시
 
@@ -70,6 +72,14 @@ passphrase-generator [command] [options]
 | `--no-special` | 특수 문자 제외 | false |
 | `--ambiguous`, `-a` | 모호한 문자 (I, l, 1, 0, O) 포함 | false |
 
+#### PIN 옵션 (PIN Options)
+
+| 옵션 | 설명 | 기본값 |
+| --- | --- | --- |
+| `--length`, `-l <n>` | PIN 길이 | 4 |
+| `--allow-seq` | 연속된 숫자 허용 (예: 1234) | false |
+| `--allow-repeat` | 반복되는 숫자 허용 (예: 1111) | false |
+
 ### CLI 예제 (Examples)
 
 ```bash
@@ -90,6 +100,13 @@ passphrase-generator passphrase --lang ko --qwerty
 # Leet Speak 적용 및 대문자 변환
 passphrase-generator passphrase --leet --transform uppercase
 # 출력 예: P455W0RD-C0RR3C7-H0R53-B4773RY
+
+# PIN 생성 (기본 4자리, 보안 규칙 적용)
+passphrase-generator pin
+# 출력 예: 5028
+
+# 6자리 PIN 생성
+passphrase-generator pin -l 6
 ```
 
 ## 라이브러리 사용법 (Library Usage)
@@ -130,6 +147,24 @@ const password = PasswordGenerator.generatePassword({
 console.log(password);
 ```
 
+### PIN 생성 (Generate a PIN)
+
+```typescript
+import { PasswordGenerator } from '@passcend/passphrase-generator';
+
+// 기본 PIN 생성 (4자리, 연속/반복 불가)
+const pin = PasswordGenerator.generatePin();
+console.log(pin); // 예: "8402"
+
+// 옵션 사용
+const customPin = PasswordGenerator.generatePin({
+    length: 6,
+    allowSequential: true, // 123456 허용
+    allowRepeated: true    // 111111 허용
+});
+console.log(customPin);
+```
+
 ### 비밀번호 강도 확인 (Check Password Strength)
 
 ```typescript
@@ -158,6 +193,14 @@ console.log(strength);
 ### `PasswordGenerator.generatePassword(options?)`
 
 (기존 README 내용과 동일)
+
+### `PasswordGenerator.generatePin(options?)`
+
+**옵션 (Options):**
+
+*   `length` (number): PIN 길이 (기본값: 4).
+*   `allowSequential` (boolean): 연속된 숫자 (예: 1234, 4321) 허용 여부 (기본값: false).
+*   `allowRepeated` (boolean): 반복되는 숫자 (예: 1111) 허용 여부 (기본값: false).
 
 ## 라이선스 (License)
 
