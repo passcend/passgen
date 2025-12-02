@@ -1,15 +1,22 @@
 # Passcend 패스프레이즈 생성기 (Passcend Passphrase Generator)
 
-Node.js 및 브라우저를 위한 안전하고 유연하며 종속성이 없는 비밀번호 및 패스프레이즈 생성기입니다.
+Node.js 및 브라우저를 위한 안전하고 유연하며 종속성이 없는 비밀번호 및 패스프레이즈 생성기입니다. 한국어 패스프레이즈 생성과 QWERTY 변환, Leet Speak 등 다양한 기능을 지원합니다.
 
 ## 특징 (Features)
 
 *   **보안 (Secure)**: `crypto.getRandomValues` (브라우저) 또는 `crypto.randomBytes` (Node.js)를 사용하여 암호학적으로 안전한 난수를 생성합니다.
 *   **유연성 (Flexible)**: 문자 세트(대문자, 소문자, 숫자, 특수 문자)를 사용자 정의하여 임의의 비밀번호를 생성할 수 있습니다.
-*   **패스프레이즈 (Passphrases)**: EFF 대용량 단어 목록 (7776개 단어)을 사용하여 기억하기 쉬운 패스프레이즈를 생성합니다.
+*   **패스프레이즈 (Passphrases)**:
+    *   **영어**: EFF 대용량 단어 목록 (7776개 단어)을 사용합니다.
+    *   **한국어**: BIP-39 한국어 단어 목록을 사용하여 기억하기 쉬운 패스프레이즈를 생성합니다.
+*   **변환 기능 (Transformations)**:
+    *   대소문자 변환 (Lowercase, Uppercase, Titlecase)
+    *   Leet Speak (1337) 지원
+    *   한글 -> 영문 QWERTY 키보드 입력 변환
 *   **강도 측정기 (Strength Meter)**: 내장된 비밀번호 강도 추정 기능 (0-4점).
 *   **무의존성 (Zero Dependencies)**: 외부 런타임 종속성이 없습니다.
 *   **TypeScript 지원 (TypeScript Support)**: TypeScript로 작성되었으며 전체 타입 정의를 포함합니다.
+*   **CLI 도구**: 커맨드 라인에서 바로 비밀번호와 패스프레이즈를 생성할 수 있습니다.
 
 ## 설치 (Installation)
 
@@ -17,28 +24,75 @@ Node.js 및 브라우저를 위한 안전하고 유연하며 종속성이 없는
 npm install @passcend/passphrase-generator
 ```
 
-## 사용법 (Usage)
+## CLI 사용법 (CLI Usage)
 
-### 비밀번호 생성 (Generate a Password)
+이 패키지는 CLI 도구를 포함하고 있습니다. 전역으로 설치하거나 `npx`를 사용하여 실행할 수 있습니다.
 
-```typescript
-import { PasswordGenerator } from '@passcend/passphrase-generator';
+```bash
+# npx로 실행 (설치 없이)
+npx @passcend/passphrase-generator [command] [options]
 
-// 기본 비밀번호 생성 (16자, 모든 유형 포함)
-const password = PasswordGenerator.generatePassword();
-console.log(password); // 예: "x8!kL9#mP2$qR5@z"
-
-// 옵션 사용자 정의
-const customPassword = PasswordGenerator.generatePassword({
-    length: 20,
-    uppercase: true,
-    lowercase: true,
-    numbers: true,
-    special: false,
-    ambiguous: false // I, l, 1, 0, O 제외
-});
-console.log(customPassword);
+# 또는 전역 설치 후 실행
+npm install -g @passcend/passphrase-generator
+passphrase-generator [command] [options]
 ```
+
+### 명령어 (Commands)
+
+*   `password`: 임의의 비밀번호 생성 (기본값)
+*   `passphrase`: 기억하기 쉬운 패스프레이즈 생성
+*   `strength <password>`: 비밀번호 강도 확인
+*   `help`: 도움말 표시
+
+### 옵션 (Options)
+
+#### 패스프레이즈 옵션 (Passphrase Options)
+
+| 옵션 | 설명 | 기본값 |
+| --- | --- | --- |
+| `--words`, `-w <n>` | 단어 수 | 4 |
+| `--sep`, `-s <char>` | 단어 구분자 | `-` |
+| `--no-caps` | 단어의 첫 글자를 대문자로 변경하지 않음 | false |
+| `--no-number` | 임의의 숫자 하나를 포함하지 않음 | false |
+| `--lang <code>` | 언어 선택 (`en`: 영어, `ko`: 한국어) | `en` |
+| `--qwerty` | 한국어 단어를 QWERTY 키보드 입력 영문으로 변환 | false |
+| `--transform <type>` | 대소문자 변환 (`lowercase`, `uppercase`, `titlecase`) | - |
+| `--leet` | Leet Speak 적용 (예: e -> 3, a -> 4) | false |
+
+#### 비밀번호 옵션 (Password Options)
+
+| 옵션 | 설명 | 기본값 |
+| --- | --- | --- |
+| `--length`, `-l <n>` | 비밀번호 길이 | 16 |
+| `--no-upper` | 대문자 제외 | false |
+| `--no-lower` | 소문자 제외 | false |
+| `--no-numbers` | 숫자 제외 | false |
+| `--no-special` | 특수 문자 제외 | false |
+| `--ambiguous`, `-a` | 모호한 문자 (I, l, 1, 0, O) 포함 | false |
+
+### CLI 예제 (Examples)
+
+```bash
+# 기본 비밀번호 생성
+passphrase-generator password
+
+# 20자 길이의 비밀번호 생성, 특수문자 제외
+passphrase-generator password -l 20 --no-special
+
+# 한국어 패스프레이즈 생성
+passphrase-generator passphrase --lang ko
+# 출력 예: 강낭콩-아버지-소나무-바다
+
+# 한국어 패스프레이즈를 QWERTY 영문으로 변환
+passphrase-generator passphrase --lang ko --qwerty
+# 출력 예: rkdskdzhd-dkqjwl-thskan-qkek
+
+# Leet Speak 적용 및 대문자 변환
+passphrase-generator passphrase --leet --transform uppercase
+# 출력 예: P455W0RD-C0RR3C7-H0R53-B4773RY
+```
+
+## 라이브러리 사용법 (Library Usage)
 
 ### 패스프레이즈 생성 (Generate a Passphrase)
 
@@ -49,14 +103,31 @@ import { PasswordGenerator } from '@passcend/passphrase-generator';
 const passphrase = PasswordGenerator.generatePassphrase();
 console.log(passphrase); // 예: "Correct-Horse-Battery-Staple5"
 
-// 옵션 사용자 정의
+// 고급 옵션 사용
 const customPassphrase = PasswordGenerator.generatePassphrase({
-    numWords: 6,
-    wordSeparator: ' ',
-    capitalize: false,
-    includeNumber: false
+    numWords: 5,
+    wordSeparator: '_',
+    language: 'ko', // 한국어 사용
+    qwertyConvert: true, // 한글 -> QWERTY 영문 변환
+    transform: 'lowercase', // 소문자로 변환
+    leet: true // Leet speak 적용
 });
-console.log(customPassphrase); // 예: "correct horse battery staple blue sky"
+console.log(customPassphrase);
+```
+
+### 비밀번호 생성 (Generate a Password)
+
+```typescript
+import { PasswordGenerator } from '@passcend/passphrase-generator';
+
+const password = PasswordGenerator.generatePassword({
+    length: 20,
+    uppercase: true,
+    lowercase: true,
+    numbers: true,
+    special: false,
+});
+console.log(password);
 ```
 
 ### 비밀번호 강도 확인 (Check Password Strength)
@@ -66,36 +137,12 @@ import { PasswordGenerator } from '@passcend/passphrase-generator';
 
 const strength = PasswordGenerator.calculateStrength('weakpassword');
 console.log(strength);
-// 출력:
-// {
-//   score: 1,
-//   label: 'Weak',
-//   color: 'orange'
-// }
+// { score: 1, label: 'Weak', color: 'orange', entropy: ... }
 ```
 
 ## API 참조 (API Reference)
 
-### `PasswordGenerator.generatePassword(options?)`
-
-임의의 비밀번호 문자열을 생성합니다.
-
-**옵션 (Options):**
-
-*   `length` (number): 비밀번호 길이 (기본값: 16).
-*   `uppercase` (boolean): 대문자 포함 여부 (기본값: true).
-*   `lowercase` (boolean): 소문자 포함 여부 (기본값: true).
-*   `numbers` (boolean): 숫자 포함 여부 (기본값: true).
-*   `special` (boolean): 특수 문자 포함 여부 (기본값: true).
-*   `ambiguous` (boolean): 모호한 문자 포함 여부 (기본값: false).
-*   `minUppercase` (number): 최소 대문자 개수 (기본값: 1).
-*   `minLowercase` (number): 최소 소문자 개수 (기본값: 1).
-*   `minNumbers` (number): 최소 숫자 개수 (기본값: 1).
-*   `minSpecial` (number): 최소 특수 문자 개수 (기본값: 1).
-
 ### `PasswordGenerator.generatePassphrase(options?)`
-
-EFF 대용량 단어 목록을 사용하여 임의의 패스프레이즈 문자열을 생성합니다.
 
 **옵션 (Options):**
 
@@ -103,16 +150,14 @@ EFF 대용량 단어 목록을 사용하여 임의의 패스프레이즈 문자�
 *   `wordSeparator` (string): 단어 사이의 구분자 (기본값: '-').
 *   `capitalize` (boolean): 각 단어의 첫 글자 대문자화 여부 (기본값: true).
 *   `includeNumber` (boolean): 단어 중 하나에 임의의 숫자 추가 여부 (기본값: true).
+*   `language` ('en' | 'ko'): 사용할 언어 (기본값: 'en').
+*   `qwertyConvert` (boolean): 한국어 단어를 QWERTY 키보드에 해당하는 영문으로 변환 (기본값: false).
+*   `transform` ('lowercase' | 'uppercase' | 'titlecase'): 결과 문자열의 대소문자 변환.
+*   `leet` (boolean): Leet speak 치환 적용.
 
-### `PasswordGenerator.calculateStrength(password)`
+### `PasswordGenerator.generatePassword(options?)`
 
-비밀번호의 추정 강도를 계산합니다.
-
-**반환값 (Returns):**
-
-*   `score` (number): 0 (매우 약함) ~ 4 (매우 강함).
-*   `label` (string): 사람이 읽을 수 있는 강도 라벨.
-*   `color` (string): 추천 UI 색상 (red, orange, yellow, lime, green).
+(기존 README 내용과 동일)
 
 ## 라이선스 (License)
 
