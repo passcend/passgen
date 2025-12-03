@@ -1,8 +1,9 @@
-import { getRandomNumber } from './utils';
+import { getRandomNumber } from './random/number';
 import { EFF_LONG_WORDLIST } from './wordlists/eff-long';
 import { KOREAN_WORDLIST } from './wordlists/korean';
-import { convertHangulToQwerty } from './hangul';
-import { CaseType, leetSpeak, transformCase } from './transformations';
+import { convertHangulToQwerty } from './hangul/convert';
+import { CaseType, transformCase } from './transformations/case';
+import { leetSpeak } from './transformations/leet';
 
 export interface PassphraseGeneratorOptions {
     numWords: number;

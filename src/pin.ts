@@ -1,4 +1,4 @@
-import { getRandomNumber } from './utils';
+import { getRandomNumber } from './random/number';
 
 export interface PinGeneratorOptions {
     length: number;
