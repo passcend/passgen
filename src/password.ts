@@ -1,4 +1,5 @@
-import { getRandomNumber, shuffleArray } from './utils';
+import { getRandomNumber } from './random/number';
+import { shuffleArray } from './utils/shuffle';
 
 export interface PasswordGeneratorOptions {
     length: number;
