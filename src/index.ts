@@ -3,6 +3,7 @@ import { generatePassphrase, PassphraseGeneratorOptions, defaultPassphraseOption
 import { generatePin, PinGeneratorOptions, defaultPinOptions } from './pin';
 import { calculateStrength, calculateEntropy, PasswordStrength } from './strength';
 import { validatePassword, PasswordPolicy, ValidationResult } from './validator';
+import { encrypt, decrypt } from './encryption/aes-gcm';
 
 export {
     generatePassword,
@@ -19,7 +20,9 @@ export {
     PasswordStrength,
     validatePassword,
     PasswordPolicy,
-    ValidationResult
+    ValidationResult,
+    encrypt,
+    decrypt
 };
 
 // Deprecated: Use named exports instead for better tree-shaking
